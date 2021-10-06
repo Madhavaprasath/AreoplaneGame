@@ -14,9 +14,9 @@ enum states{
 var current_state
 var current_animation
 
-
 var velocity=Vector2()
 var direction_vector=Vector2()
+var circular_time=0
 
 onready var player=get_node(Player_path)
 func _ready():
@@ -26,10 +26,10 @@ func _ready():
 func _physics_process(delta):
 	print(velocity)
 	check_input()
-	match_state(delta)
+	#match_state(delta)
 	check_exit_conditions(delta)
 	velocity=player.move_and_slide(velocity)
-
+	make_circles(delta)
 
 
 func match_state(delta):
@@ -66,7 +66,7 @@ func check_input():
 	direction_vector.y=int(directions["Down"])-int(directions["Up"])
 
 func play_idle_state(delta):
-	velocity=lerp(velocity,Vector2(0,0),1-pow(0.00001,delta))
+	velocity=lerp(velocity,Vector2(0,0),1-pow(1,delta))
 
 func exit_condition_idle():
 	if direction_vector.x!=0 and direction_vector.y==0 ||direction_vector.x==0 and direction_vector.y!=0:
@@ -78,3 +78,8 @@ func exit_condition_idle():
 func play_move_state(delta):
 	velocity=lerp(velocity,direction_vector*speed,1-pow(0.00001,delta))
 
+
+func make_circles(delta):
+	circular_time+=delta*-5
+	velocity.x=sin(circular_time)*400
+	velocity.y=cos(circular_time)*400

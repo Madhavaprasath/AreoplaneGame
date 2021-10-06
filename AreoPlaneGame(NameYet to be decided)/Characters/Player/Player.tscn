@@ -5,6 +5,7 @@
 [ext_resource path="res://icon.png" type="Texture" id=3]
 
 [node name="Player" instance=ExtResource( 1 )]
+position = Vector2( 523, 252 )
 script = ExtResource( 2 )
 
 [node name="Sprite" parent="Body" index="0"]
