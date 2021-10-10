@@ -17,19 +17,26 @@ var current_animation
 var velocity=Vector2()
 var direction_vector=Vector2()
 var circular_time=0
+var pointing_radius=Vector2()
+var a =true
 
 onready var player=get_node(Player_path)
 func _ready():
 	current_state=states.IDLE
 	current_animation="Idle"
-
 func _physics_process(delta):
-	print(velocity)
 	check_input()
 	#match_state(delta)
 	check_exit_conditions(delta)
 	velocity=player.move_and_slide(velocity)
-	make_circles(delta)
+	if a:
+		pointing_radius=global_position+Vector2(0,350)
+		a=false
+	if !a:
+		player.pos.look_at(pointing_radius)
+		rotation=player.pos.rotation
+		print(rad2deg(player.pos.rotation))
+		make_circles(delta)
 
 
 func match_state(delta):
@@ -67,6 +74,8 @@ func check_input():
 
 func play_idle_state(delta):
 	velocity=lerp(velocity,Vector2(0,0),1-pow(1,delta))
+	circular_time=0
+	current_state=states.CIRCLE
 
 func exit_condition_idle():
 	if direction_vector.x!=0 and direction_vector.y==0 ||direction_vector.x==0 and direction_vector.y!=0:
@@ -76,10 +85,13 @@ func exit_condition_idle():
 
 
 func play_move_state(delta):
-	velocity=lerp(velocity,direction_vector*speed,1-pow(0.00001,delta))
+	velocity=lerp(velocity,direction_vector*speed,0.4)
 
 
 func make_circles(delta):
-	circular_time+=delta*-5
-	velocity.x=sin(circular_time)*400
-	velocity.y=cos(circular_time)*400
+	circular_time+=delta*-2.5
+	var expected_velocity=Vector2()
+	expected_velocity.x=cos(circular_time)*350
+	expected_velocity.y=sin(circular_time)*350
+	velocity=lerp(velocity,expected_velocity,1-pow(0.00001,delta))
+	current_state=states.IDLE
