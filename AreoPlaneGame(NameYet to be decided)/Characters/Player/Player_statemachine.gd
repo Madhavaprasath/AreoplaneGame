@@ -20,24 +20,17 @@ var circular_time=0
 var pointing_radius=Vector2()
 var a =true
 
+
+
 onready var player=get_node(Player_path)
 func _ready():
 	current_state=states.IDLE
 	current_animation="Idle"
 func _physics_process(delta):
 	check_input()
-	#match_state(delta)
+	match_state(delta)
 	check_exit_conditions(delta)
 	velocity=player.move_and_slide(velocity)
-	if a:
-		pointing_radius=global_position+Vector2(0,350)
-		a=false
-	if !a:
-		player.pos.look_at(pointing_radius)
-		rotation=player.pos.rotation
-		print(rad2deg(player.pos.rotation))
-		make_circles(delta)
-
 
 func match_state(delta):
 	match current_state:
@@ -50,7 +43,7 @@ func match_state(delta):
 		states.ROCKETLAUNCH:
 			pass
 		states.CIRCLE:
-			pass
+			make_circles(delta)
 
 
 func check_exit_conditions(delta):
@@ -58,7 +51,9 @@ func check_exit_conditions(delta):
 		states.IDLE:
 			exit_condition_idle()
 		states.MOVE:
-			pass
+			exit_run_condition()
+		states.CIRCLE:
+			exit_circle_condition()
 
 
 
@@ -71,17 +66,26 @@ func check_input():
 	}
 	direction_vector.x=int(directions["Right"])-int(directions["Left"])
 	direction_vector.y=int(directions["Down"])-int(directions["Up"])
-
 func play_idle_state(delta):
-	velocity=lerp(velocity,Vector2(0,0),1-pow(1,delta))
+	velocity=Vector2()
 	circular_time=0
-	current_state=states.CIRCLE
 
 func exit_condition_idle():
 	if direction_vector.x!=0 and direction_vector.y==0 ||direction_vector.x==0 and direction_vector.y!=0:
 		current_state=states.MOVE
 	elif direction_vector.x!=0 and direction_vector.y!=0:
+		pointing_radius=global_position+Vector2(0,350*direction_vector.y)
 		current_state=states.CIRCLE
+
+func exit_run_condition():
+	if direction_vector.x ==0 && direction_vector.y==0:
+		current_state=states.IDLE
+	if direction_vector.x!=0 && direction_vector.y!=0:
+		current_state=states.CIRCLE
+
+func exit_circle_condition():
+	if direction_vector.x==0 || direction_vector.y==0:
+		current_state=states.IDLE
 
 
 func play_move_state(delta):
@@ -91,7 +95,6 @@ func play_move_state(delta):
 func make_circles(delta):
 	circular_time+=delta*-2.5
 	var expected_velocity=Vector2()
-	expected_velocity.x=cos(circular_time)*350
-	expected_velocity.y=sin(circular_time)*350
+	expected_velocity.x=-cos(circular_time)*375*direction_vector.x
+	expected_velocity.y=-sin(circular_time)*375*direction_vector.y
 	velocity=lerp(velocity,expected_velocity,1-pow(0.00001,delta))
-	current_state=states.IDLE

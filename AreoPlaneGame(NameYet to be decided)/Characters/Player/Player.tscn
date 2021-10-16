@@ -14,13 +14,5 @@ texture = ExtResource( 3 )
 [node name="Statemachine" parent="." index="2"]
 Player_path = NodePath("..")
 
-[node name="Position2D" type="Position2D" parent="." index="3"]
-position = Vector2( 32, 32 )
-
-[node name="Sprite" type="Sprite" parent="Position2D" index="0"]
-position = Vector2( 14.3496, 16.0181 )
-scale = Vector2( 0.927001, 0.895716 )
-texture = ExtResource( 3 )
-
-[node name="Line2D" type="Line2D" parent="." index="4"]
+[node name="Line2D" type="Line2D" parent="." index="3"]
 points = PoolVector2Array( -0.0177002, -0.790405 )
