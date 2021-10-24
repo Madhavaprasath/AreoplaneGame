@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Rockets/Rocket_trail.gd" type="Script" id=1]
+[ext_resource path="res://Sprites/trail.png" type="Texture" id=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, -12.0, 0, 0, Vector2( 1, 1 ), -1.81818, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0.536913, 1 )
+colors = PoolColorArray( 1, 0.988281, 0.988281, 0, 1, 1, 1, 1 )
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0, 0.00326797, 0.48366, 0.751634, 0.836601, 1 )
+colors = PoolColorArray( 0.0666667, 0.0470588, 0.0156863, 0.121569, 0.0637317, 0.0449871, 0.0149957, 0.159206, 0, 0, 0, 0.976471, 0.960938, 0.66736, 0.161407, 1, 1, 0.731781, 0.269531, 1, 1, 1, 1, 1 )
+
+[node name="Rocket_trail" type="Line2D"]
+width = 30.0
+width_curve = SubResource( 1 )
+gradient = SubResource( 2 )
+texture = ExtResource( 2 )
+texture_mode = 2
+script = ExtResource( 1 )
+gradient_color = SubResource( 3 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[connection signal="tween_all_completed" from="Tween" to="." method="_on_Tween_tween_all_completed"]

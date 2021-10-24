@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Sprites/tiles.png" type="Texture" id=1]
+[ext_resource path="res://Bullets/Bullets.tscn" type="PackedScene" id=2]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 3.04572
+height = 11.6272
+
+[node name="Bullets" instance=ExtResource( 2 )]
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+texture = ExtResource( 1 )
+offset = Vector2( 1, 0 )
+hframes = 11
+vframes = 9
+
+[node name="CollisionShape2D" parent="." index="1"]
+position = Vector2( -0.280937, -1.21737 )
+shape = SubResource( 1 )

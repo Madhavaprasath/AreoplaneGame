@@ -1,18 +1,26 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Characters/Actor/Actor.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Characters/Player/Player.gd" type="Script" id=2]
 [ext_resource path="res://Sprites/ships.png" type="Texture" id=3]
+[ext_resource path="res://Bullets/Player/player_bullet.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Rockets/Rockets.tscn" type="PackedScene" id=5]
 
 [node name="Player" instance=ExtResource( 1 )]
 position = Vector2( 523, 252 )
 script = ExtResource( 2 )
+bullet_scene = ExtResource( 4 )
+Rocket = ExtResource( 5 )
 
 [node name="Sprite" parent="Body" index="0"]
+position = Vector2( 0.111328, 0 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 3 )
 hframes = 4
 vframes = 2
+
+[node name="CollisionShape2D" parent="." index="1"]
+polygon = PoolVector2Array( -5.62921, -13.1547, -4.29291, -20.0591, -1.06335, -21.8409, 2.83429, -20.3932, 3.72522, -16.7183, 5.61835, -13.3774, 5.50702, -10.3706, 7.62286, -9.47974, 9.51605, -7.25249, 13.0797, -7.4752, 13.7478, -6.69568, 15.975, -5.24796, 19.7614, -4.35706, 22.8795, -3.80025, 23.8818, -6.36159, 24.6613, -2.90935, 27.334, -3.02072, 27.334, 8.11551, 7.06604, 7.78143, 6.39789, 13.1268, 1.49792, 14.2404, 1.7207, 18.5836, 1.27521, 20.0313, -2.62244, 19.5858, -2.62244, 13.6836, -5.96332, 13.6836, -7.29968, 9.00641, -7.74512, 7.78143, -28.904, 7.89279, -28.7926, -2.35254, -25.0063, -2.35254, -25.6744, -3.91162, -21.1086, -3.91162, -20.5518, -4.91388, -15.7632, -5.02524, -15.095, -6.47295, -10.8633, -6.13885, -10.3065, -9.14565 )
 
 [node name="Statemachine" parent="." index="2"]
 Player_path = NodePath("..")
@@ -21,3 +29,26 @@ Player_path = NodePath("..")
 points = PoolVector2Array( -0.0177002, -0.790405 )
 
 [node name="Rotate_tween" type="Tween" parent="." index="4"]
+
+[node name="Reload_timer" type="Node2D" parent="." index="5"]
+
+[node name="Bullet" type="Timer" parent="Reload_timer" index="0"]
+
+[node name="Positions" type="Node2D" parent="." index="6"]
+
+[node name="Shoot1" type="Position2D" parent="Positions" index="0"]
+position = Vector2( 11, -14 )
+
+[node name="Shoot2" type="Position2D" parent="Positions" index="1"]
+position = Vector2( -13, -14 )
+
+[node name="Nose_tip" type="Position2D" parent="Positions" index="2"]
+position = Vector2( -0.75, -25 )
+
+[node name="Rocket_launch1" type="Position2D" parent="Positions" index="3"]
+position = Vector2( -22, -12 )
+z_index = -1
+
+[node name="Rocket_launch2" type="Position2D" parent="Positions" index="4"]
+position = Vector2( 22, -12 )
+z_index = -1
