@@ -27,4 +27,3 @@ func spwan_missile(Roc):
 	if Roc.get_child_count()==0:
 		var rocket=Rocket.instance()
 		Roc.add_child(rocket)
-		rocket.position=Vector2()

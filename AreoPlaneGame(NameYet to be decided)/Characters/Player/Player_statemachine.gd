@@ -57,7 +57,8 @@ func match_state(delta):
 		states.ROCKETAIM:
 			pass
 		states.ROCKETLAUNCH:
-			pass
+			if targets!=[]:
+				Engine.time_scale=0.5
 		states.CIRCLE:
 			make_circles(delta)
 
@@ -73,9 +74,9 @@ func check_exit_conditions(delta):
 		states.ROCKETAIM:
 			if Input.is_action_just_released("Right_Click"):
 				Engine.time_scale=lerp(Engine.time_scale,1.0,1)
-				current_state=states.ROCKETLAUNCH
 		states.ROCKETLAUNCH:
-			current_state=states.IDLE
+			if targets==[]:
+				current_state=states.IDLE
 
 
 func check_input():
@@ -91,6 +92,7 @@ func play_idle_state(delta):
 	velocity=Vector2()
 	circling_speed=0
 	player.spwan_missiles()
+	Engine.time_scale=1.0
 
 func exit_condition_idle():
 	if direction_vector.x!=0 and direction_vector.y==0 ||direction_vector.x==0 and direction_vector.y!=0:
@@ -120,7 +122,6 @@ func make_circles(delta):
 	var expected_velocity=Vector2()
 	expected_velocity.x=cos(circular_time)*height_of_circle*direction_vector.x
 	expected_velocity.y=-sin(circular_time)*width_of_circle*direction_vector.y
-	print(expected_velocity)
 	velocity=lerp(velocity,expected_velocity,1-pow(0.00001,delta))
 
 
@@ -148,15 +149,16 @@ func _unhandled_input(event):
 					print(collided_object[0]["collider"])
 					var enemy_body=collided_object[0]["collider"]
 					var target_node=Node2D.new()
-					target_node.position=get_local_mouse_position()
-					print(target_node.position)
+					target_node.position=get_global_mouse_position()-enemy_body.global_position
 					enemy_body.add_child(target_node)
 					targets.append(target_node)
 					total_number_targets-=1
-					if total_number_targets!=2:
-						current_state=states.ROCKETLAUNCH
-						launch_rockets()
-
+	if event.is_action_released("Right_Click") && current_state in [states.ROCKETAIM]:
+		if targets!=[]:
+			current_state=states.ROCKETLAUNCH
+			launch_rockets()
+		else:
+			current_state=states.IDLE
 func launch_rockets():
 	var rocket_1_occupied=false
 	var rocket_2_occupied=false
@@ -164,17 +166,22 @@ func launch_rockets():
 		var shortest_distance=target.global_position.distance_to(player.Rocket_slot_1.global_position)
 		if (target.global_position.distance_to(player.Rocket_slot_2.global_position)<shortest_distance && !rocket_2_occupied)||rocket_1_occupied:
 			var rocket=player.Rocket_slot_2.get_children()[0]
-			rocket.set_as_toplevel(true)
-			rocket.target_position=target.global_position
+			rocket.tracking_target=target
+			rocket.position=player.Rocket_slot_2.global_position
+			rocket.rotation=player.rotation
 			rocket.fired=true
+			rocket.set_as_toplevel(true)
 			rocket_2_occupied=true
 		elif rocket_2_occupied||!rocket_1_occupied:
 			var rocket=player.Rocket_slot_1.get_children()[0]
-			rocket.set_as_toplevel(true)
-			rocket.target_position=target.global_position
+			rocket.tracking_target=target
+			rocket.position=player.Rocket_slot_1.global_position
+			rocket.rotation=player.rotation
 			rocket.fired=true
+			rocket.set_as_toplevel(true)
 			rocket_1_occupied=true
-
+	targets=[]
+	print(targets)
 
 func aiming_rockets(delta):
 	slow_down_time(delta)
