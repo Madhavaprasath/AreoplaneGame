@@ -21,28 +21,35 @@ enum states{
 
 var current_state
 var current_animation
-
+var previous_state
 var velocity=Vector2()
 var direction_vector=Vector2()
 var circular_time=0
 var pointing_radius=Vector2()
 var can_shoot=true
+var state_bef_rocket
 
 var targets=[]
 var total_number_targets=2
 onready var player=get_node(Player_path)
 
 func _ready():
+	#player.spwan_missiles()
 	current_state=states.IDLE
 	current_animation="Idle"
 
 func _physics_process(delta):
 	point_at_cursor_and_clamp_player()
-	check_input()
 	match_state(delta)
-	check_exit_conditions(delta)
+	var next_state=check_exit_conditions(delta)
+	if next_state!=null:
+		previous_state=current_state
+		current_state=next_state
 	velocity=player.move_and_slide(velocity)
+	if !current_state in [states.ROCKETAIM]:
+		check_input() 
 	if check_right_click():
+		
 		aiming_rockets(delta)
 		current_state=states.ROCKETAIM
 
@@ -66,19 +73,26 @@ func match_state(delta):
 func check_exit_conditions(delta):
 	match current_state:
 		states.IDLE:
-			exit_condition_idle()
+			return exit_condition_idle()
 		states.MOVE:
-			exit_run_condition()
+			return exit_run_condition()
 		states.CIRCLE:
-			exit_circle_condition()
+			return exit_circle_condition()
 		states.ROCKETAIM:
 			if Input.is_action_just_released("Right_Click"):
 				Engine.time_scale=lerp(Engine.time_scale,1.0,1)
+				if targets!=[]:
+					state_bef_rocket=previous_state
+					return states.ROCKETLAUNCH
+				else:
+					return previous_state
 		states.ROCKETLAUNCH:
 			if targets==[]:
-				current_state=states.IDLE
-
-
+				if state_bef_rocket in [states.CIRCLE]:
+					return states.CIRCLE
+				else:
+					return states.IDLE
+	return null
 func check_input():
 	var directions ={
 		"Left":Input.is_action_pressed("ui_left"),
@@ -90,27 +104,27 @@ func check_input():
 	direction_vector.y=int(directions["Down"])-int(directions["Up"])
 func play_idle_state(delta):
 	velocity=Vector2()
-	circling_speed=0
 	player.spwan_missiles()
 	Engine.time_scale=1.0
 
 func exit_condition_idle():
 	if direction_vector.x!=0 and direction_vector.y==0 ||direction_vector.x==0 and direction_vector.y!=0:
-		current_state=states.MOVE
+		circular_time=0
+		return states.MOVE
 	elif direction_vector.x!=0 and direction_vector.y!=0:
 		pointing_radius=global_position+Vector2(0,350*direction_vector.y)
-		current_state=states.CIRCLE
+		return states.CIRCLE
 
 func exit_run_condition():
 	if direction_vector.x ==0 && direction_vector.y==0:
-		current_state=states.IDLE
+		return states.IDLE
 	if direction_vector.x!=0 && direction_vector.y!=0:
 		pointing_radius=global_position+Vector2(0,350*direction_vector.y)
-		current_state=states.CIRCLE
+		return states.CIRCLE
 
 func exit_circle_condition():
 	if direction_vector.x==0 || direction_vector.y==0:
-		current_state=states.IDLE
+		return states.IDLE
 
 
 func play_move_state(delta):
@@ -153,35 +167,34 @@ func _unhandled_input(event):
 					enemy_body.add_child(target_node)
 					targets.append(target_node)
 					total_number_targets-=1
+				print(targets)
 	if event.is_action_released("Right_Click") && current_state in [states.ROCKETAIM]:
 		if targets!=[]:
-			current_state=states.ROCKETLAUNCH
 			launch_rockets()
-		else:
-			current_state=states.IDLE
+			current_state=states.ROCKETLAUNCH
+
 func launch_rockets():
 	var rocket_1_occupied=false
 	var rocket_2_occupied=false
 	for target in targets:
 		var shortest_distance=target.global_position.distance_to(player.Rocket_slot_1.global_position)
 		if (target.global_position.distance_to(player.Rocket_slot_2.global_position)<shortest_distance && !rocket_2_occupied)||rocket_1_occupied:
-			var rocket=player.Rocket_slot_2.get_children()[0]
-			rocket.tracking_target=target
-			rocket.position=player.Rocket_slot_2.global_position
-			rocket.rotation=player.rotation
-			rocket.fired=true
-			rocket.set_as_toplevel(true)
+			fire_misssile(player.Rocket_slot_2,target)
 			rocket_2_occupied=true
+			print(rocket_2_occupied)
 		elif rocket_2_occupied||!rocket_1_occupied:
-			var rocket=player.Rocket_slot_1.get_children()[0]
-			rocket.tracking_target=target
-			rocket.position=player.Rocket_slot_1.global_position
-			rocket.rotation=player.rotation
-			rocket.fired=true
-			rocket.set_as_toplevel(true)
+			fire_misssile(player.Rocket_slot_1,target)
 			rocket_1_occupied=true
 	targets=[]
-	print(targets)
+
+func fire_misssile(missile_slot,target):
+	var rocket=missile_slot.get_children()[0]
+	rocket.tracking_target=target
+	rocket.position=missile_slot.global_position
+	rocket.rotation=player.rotation
+	rocket.fired=true
+	rocket.set_as_toplevel(true)
+
 
 func aiming_rockets(delta):
 	slow_down_time(delta)
