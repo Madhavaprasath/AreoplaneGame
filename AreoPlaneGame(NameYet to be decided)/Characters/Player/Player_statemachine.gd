@@ -21,6 +21,7 @@ enum states{
 
 var current_state
 var current_animation
+var camera
 var previous_state
 var velocity=Vector2()
 var direction_vector=Vector2()
@@ -28,12 +29,15 @@ var circular_time=0
 var pointing_radius=Vector2()
 var can_shoot=true
 var state_bef_rocket
-
 var targets=[]
 var total_number_targets=2
+var Knock_back=Vector2()
+
 onready var player=get_node(Player_path)
 
 func _ready():
+	for i in get_tree().get_nodes_in_group("Camera"):
+		camera=i
 	#player.spwan_missiles()
 	current_state=states.IDLE
 	current_animation="Idle"
@@ -52,7 +56,9 @@ func _physics_process(delta):
 		
 		aiming_rockets(delta)
 		current_state=states.ROCKETAIM
-
+	if Input.is_action_just_pressed("Left_Click"):
+		var direction=-(player.global_position.direction_to(get_global_mouse_position()))
+		knock_back(direction)
 func match_state(delta):
 	match current_state:
 		states.IDLE:
@@ -153,7 +159,8 @@ func _unhandled_input(event):
 	if event.is_action_pressed("Left_Click"):
 		if can_shoot && ! current_state in [states.ROCKETAIM,states.ROCKETLAUNCH]:
 			spwan_bullets()
-			player.check_current_shoot_place() 
+			camera.start_shake(1,0.02,1)
+			player.check_current_shoot_place()
 		elif current_state==states.ROCKETAIM:
 			if total_number_targets!=0:
 				var mouse_position=get_global_mouse_position()
@@ -203,6 +210,10 @@ func aiming_rockets(delta):
 func slow_down_time(delta):
 	Engine.time_scale=lerp(Engine.time_scale,0.0,1-pow(0.0001,delta))
 
+
+func knock_back(direction):
+	velocity=lerp(velocity,direction*Vector2(10,10),0.8)
+	player.move_and_slide(velocity)
 
 func check_right_click():
 	return (Input.is_action_pressed("Right_Click"))
