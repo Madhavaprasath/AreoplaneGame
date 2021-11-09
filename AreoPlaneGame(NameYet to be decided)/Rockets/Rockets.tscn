@@ -8,6 +8,7 @@
 extents = Vector2( 1.94314, 7.9104 )
 
 [node name="Rocket" type="Area2D"]
+modulate = Color( 1.5, 1.5, 1.5, 1 )
 scale = Vector2( 2, 2 )
 script = ExtResource( 2 )
 __meta__ = {

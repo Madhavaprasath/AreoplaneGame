@@ -39,3 +39,4 @@ func _on_Rocket_body_entered(body):
 	if body.is_in_group("Targets"):
 		queue_free()
 		body.queue_free()
+		Signal.emit_signal("screen_shake",1,0.1,6)

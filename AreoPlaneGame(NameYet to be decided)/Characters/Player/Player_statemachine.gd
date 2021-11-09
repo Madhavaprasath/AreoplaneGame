@@ -33,6 +33,8 @@ var targets=[]
 var total_number_targets=2
 var Knock_back=Vector2()
 
+
+
 onready var player=get_node(Player_path)
 
 func _ready():
@@ -159,7 +161,7 @@ func _unhandled_input(event):
 	if event.is_action_pressed("Left_Click"):
 		if can_shoot && ! current_state in [states.ROCKETAIM,states.ROCKETLAUNCH]:
 			spwan_bullets()
-			camera.start_shake(1,0.02,1)
+			camera.start_shake(1,0.04,1.5)
 			player.check_current_shoot_place()
 		elif current_state==states.ROCKETAIM:
 			if total_number_targets!=0:

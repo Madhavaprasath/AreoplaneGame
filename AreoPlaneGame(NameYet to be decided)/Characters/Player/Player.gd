@@ -9,7 +9,9 @@ onready var current_shoot_place=place_1
 onready var Rocket_slot_1=get_node("Positions/Rocket_launch1")
 onready var Rocket_slot_2=get_node("Positions/Rocket_launch2")
 
-
+func _process(delta):
+	if $RayCast2D.is_colliding():
+		print("Hello")
 
 
 func check_current_shoot_place():
