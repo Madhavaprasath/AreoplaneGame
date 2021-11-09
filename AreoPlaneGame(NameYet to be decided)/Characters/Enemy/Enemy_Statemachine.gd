@@ -12,11 +12,13 @@ enum states{
 }
 onready var enemy_manager=get_parent().get_parent()
 onready var enemy=get_parent()
+onready var raycast_parent = get_parent().get_node("Raycast")
 var circular_time=0
 var circle=false
 var angular_time=0
 var a=true
 func _physics_process(delta):
+	rotate_raycast()
 	var offset
 	if a:
 		offset=Vector2(0,200) 
@@ -67,3 +69,7 @@ func make_circles(delta):
 	expected_velocity.x=cos(angular_time)*187.5
 	expected_velocity.y=sin(angular_time)*187.5
 	velocity=expected_velocity
+
+
+func rotate_raycast():
+	raycast_parent.rotation_degrees+=10
