@@ -7,21 +7,20 @@
 [ext_resource path="res://Test/StaticBody2D.gd" type="Script" id=5]
 [ext_resource path="res://Components/Screen_shake.gd" type="Script" id=6]
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 31.7862, 29.2621 )
 
-[sub_resource type="Environment" id=3]
+[sub_resource type="Environment" id=2]
 background_mode = 4
 glow_enabled = true
-glow_intensity = 1.0
+glow_intensity = 0.5
 glow_strength = 0.95
-glow_blend_mode = 0
 glow_bicubic_upscale = true
 
-[sub_resource type="RectangleShape2D" id=4]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 30.5386, 297.905 )
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 30.5386, 557.361 )
 
 [node name="Test" type="Node2D"]
@@ -29,8 +28,6 @@ script = ExtResource( 2 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 16, 16 )
-
-[node name="Slowmotion" type="Node2D" parent="."]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." groups=[
 "Targets",
@@ -45,7 +42,7 @@ __meta__ = {
 texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="." groups=[
 "Targets",
@@ -60,7 +57,7 @@ __meta__ = {
 texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="Screen_shake" type="Camera2D" parent="." groups=[
 "Camera",
@@ -78,7 +75,7 @@ script = ExtResource( 6 )
 [node name="Tween" type="Tween" parent="Screen_shake"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 3 )
+environment = SubResource( 2 )
 
 [node name="Borders" type="Node2D" parent="."]
 
@@ -93,7 +90,7 @@ texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2D"]
 position = Vector2( -2.99661, 274.19 )
-shape = SubResource( 4 )
+shape = SubResource( 3 )
 
 [node name="StaticBody2D4" type="StaticBody2D" parent="Borders"]
 position = Vector2( 1059.64, 29.0328 )
@@ -106,7 +103,7 @@ texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2D4"]
 position = Vector2( -2.99661, 274.19 )
-shape = SubResource( 4 )
+shape = SubResource( 3 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="Borders"]
 position = Vector2( 693.308, -30.8995 )
@@ -120,7 +117,7 @@ texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2D2"]
 position = Vector2( -1.49834, 191.783 )
-shape = SubResource( 5 )
+shape = SubResource( 4 )
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="Borders"]
 position = Vector2( 672.543, 631.7 )
@@ -134,7 +131,7 @@ texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2D3"]
 position = Vector2( -1.49834, 191.783 )
-shape = SubResource( 5 )
+shape = SubResource( 4 )
 
 [connection signal="timeout" from="Screen_shake/Wait_timer" to="Screen_shake" method="_on_Wait_timer_timeout"]
 [connection signal="timeout" from="Screen_shake/Shake_timer" to="Screen_shake" method="_on_Shake_timer_timeout"]

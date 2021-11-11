@@ -1,21 +1,23 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Characters/Actor/Actor.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Characters/Player/Player.gd" type="Script" id=2]
 [ext_resource path="res://Sprites/ships.png" type="Texture" id=3]
 [ext_resource path="res://Bullets/Player/player_bullet.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Rockets/Rockets.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Characters/Player/Target_verify.gd" type="Script" id=6]
 
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=1]
 
 [node name="Player" instance=ExtResource( 1 )]
 position = Vector2( 523, 252 )
 script = ExtResource( 2 )
 bullet_scene = ExtResource( 4 )
 Rocket = ExtResource( 5 )
+movement_speed = 500
 
 [node name="Sprite" parent="Body" index="0"]
-material = SubResource( 2 )
+material = SubResource( 1 )
 position = Vector2( 0.111328, 0 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 3 )
@@ -29,16 +31,19 @@ polygon = PoolVector2Array( -5.62921, -13.1547, -4.29291, -20.0591, -1.06335, -2
 [node name="Statemachine" parent="." index="2"]
 Player_path = NodePath("..")
 
-[node name="Line2D" type="Line2D" parent="." index="3"]
+[node name="Target_verify" type="Node" parent="." index="3"]
+script = ExtResource( 6 )
+
+[node name="Line2D" type="Line2D" parent="." index="4"]
 points = PoolVector2Array( -0.0177002, -0.790405 )
 
-[node name="Rotate_tween" type="Tween" parent="." index="4"]
+[node name="Rotate_tween" type="Tween" parent="." index="5"]
 
-[node name="Reload_timer" type="Node2D" parent="." index="5"]
+[node name="Reload_timer" type="Node2D" parent="." index="6"]
 
 [node name="Bullet" type="Timer" parent="Reload_timer" index="0"]
 
-[node name="Positions" type="Node2D" parent="." index="6"]
+[node name="Positions" type="Node2D" parent="." index="7"]
 
 [node name="Shoot1" type="Position2D" parent="Positions" index="0"]
 position = Vector2( 11, -14 )
@@ -57,6 +62,7 @@ z_index = -1
 position = Vector2( 22, -12 )
 z_index = -1
 
-[node name="RayCast2D" type="RayCast2D" parent="." index="7"]
-enabled = true
-cast_to = Vector2( 0, 60 )
+[node name="Target_direction" type="Node2D" parent="." index="8"]
+position = Vector2( 0, -50 )
+
+[connection signal="rocket_fired" from="Statemachine" to="Target_verify" method="_on_Statemachine_rocket_fired"]

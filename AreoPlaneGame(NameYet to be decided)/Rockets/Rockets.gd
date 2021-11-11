@@ -20,16 +20,17 @@ func _physics_process(delta):
 
 
 func move(delta):
-	track(tracking_target)
+	if tracking_target:
+		track(tracking_target)
+	else:
+		queue_free()
 	var direction=(target_position-global_position).normalized()
 	var rotate_amount=direction.cross(transform.y)
 	rotate(rotate_amount*15.0*delta)
 	global_translate(-transform.y*speed*delta)
 
 func track(target):
-	if target!=null:
-		target_position=target.global_position
-
+	target_position=target.global_position
 
 func _on_Timer_timeout():
 	rocket_trail.stop()
@@ -37,6 +38,7 @@ func _on_Timer_timeout():
 
 func _on_Rocket_body_entered(body):
 	if body.is_in_group("Targets"):
+		Signal.emit_signal("Object_Destroyed",body,self)
 		queue_free()
 		body.queue_free()
 		Signal.emit_signal("screen_shake",1,0.1,6)

@@ -18,7 +18,7 @@ var circle=false
 var angular_time=0
 var a=true
 func _physics_process(delta):
-	rotate_raycast()
+	rotate_raycast(delta)
 	var offset
 	if a:
 		offset=Vector2(0,200) 
@@ -36,6 +36,7 @@ func _physics_process(delta):
 		angular_time=0
 		velocity=Vector2(1,1)
 		circle=false
+		a=true
 	velocity=enemy.move_and_slide(velocity)
 
 func match_current_state(delta):
@@ -71,5 +72,5 @@ func make_circles(delta):
 	velocity=expected_velocity
 
 
-func rotate_raycast():
-	raycast_parent.rotation_degrees+=10
+func rotate_raycast(delta):
+	raycast_parent.rotation+=11*PI*delta
